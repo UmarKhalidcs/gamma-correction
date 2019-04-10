@@ -1,0 +1,24 @@
+def adjust_gamma(image, gamma=1.0):
+    #
+    invGamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** invGamma) * 255
+                      for i in np.arange(0, 256)]).astype("uint8")
+
+    # apply gamma correction using the lookup table
+    return cv2.LUT(image, table)
+
+original= cv2.imread('test11.jpeg')
+
+for gamma in np.arange(0.8, 3.5, 0.05):
+    # ignore when gamma is 1 (there will be no change to the image)
+    if gamma == 1:
+        continue
+
+    gamma = gamma if gamma > 0 else 0.1
+    adjusted = adjust_gamma(original, gamma=gamma)
+    cv2.putText(adjusted, "g={}".format(gamma), (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 3)
+    cv2.imshow("Images", np.hstack([original, adjusted]))
+
+    cv2.waitKey(0)
+cv2.imwrite('02.jpeg', adjust_gamma(original, 2.5))
